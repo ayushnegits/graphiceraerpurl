@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fee | Campus ERP</title>
+  <link rel="stylesheet" href="css/dashboard.css" />
+  <style>
+    /* ── Layout ─────────────────────────────────────── */
+    .fee-layout {
+      display: flex;
+      min-height: calc(100vh - 58px);
+    }
+
+    /* ── LEFT SIDEBAR ───────────────────────────────── */
+    .fee-sidebar {
+      width: 260px;
+      min-width: 260px;
+      background: rgb(6, 17, 135);
+      padding: 10px 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .fee-sidebar a {
+      display: block;
+      color: #fff;
+      text-decoration: none;
+      padding: 12px 16px;
+      border-radius: 7px;
+      font-size: 13px;
+      font-weight: 700;
+      border: 1px solid rgba(255, 255, 255, .45);
+      transition: background .2s;
+      cursor: pointer;
+    }
+
+    .fee-sidebar a:hover,
+    .fee-sidebar a.active {
+      background: rgba(255, 255, 255, .12);
+    }
+
+    /* ── MAIN CONTENT ───────────────────────────────── */
+    .fee-content {
+      flex: 1;
+      padding: 20px 24px;
+      background: #f4f8ff;
+    }
+
+    /* ── PLACEHOLDER ────────────────────────────────── */
+    .fee-placeholder {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 100%;
+      min-height: 300px;
+      font-size: 18px;
+      color: #5f91c8;
+      letter-spacing: .3px;
+    }
+
+    /* ── FEE SUBMISSION PAGE ─────────────────────────── */
+    #fee-submission-panel {
+      display: none;
+    }
+
+    .notice-strip {
+      background: #fff3cd;
+      border: 1px solid #ffc107;
+      border-radius: 4px;
+      padding: 8px 14px;
+      margin-bottom: 16px;
+      font-size: 12px;
+      color: #555;
+    }
+
+    .notice-strip p {
+      margin-bottom: 3px;
+    }
+
+    .notice-strip span.star {
+      color: #e00;
+      margin-right: 4px;
+    }
+
+    /* Fee type row */
+    .fee-type-row {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .fee-type-row label {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+    }
+
+    .fee-type-row select {
+      padding: 6px 28px 6px 10px;
+      font-size: 13px;
+      border: 1px solid #bbb;
+      border-radius: 5px;
+      background: white;
+      cursor: pointer;
+      min-width: 200px;
+    }
+
+    /* Two-column layout */
+    .fee-body {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+
+    .fee-table-wrap {
+      flex: 1;
+      background: white;
+      border: 1px solid #cfd8e6;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .fee-table-wrap .table-header {
+      background: #e8f0fb;
+      padding: 10px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1a3a6c;
+      border-bottom: 1px solid #cfd8e6;
+    }
+
+    .fee-table-wrap table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12.5px;
+    }
+
+    .fee-table-wrap th {
+      background: #f1f5fc;
+      padding: 9px 10px;
+      text-align: center;
+      font-weight: 700;
+      color: #2c3e50;
+      border-bottom: 2px solid #cfd8e6;
+      border-right: 1px solid #ddd;
+    }
+
+    .fee-table-wrap th:first-child {
+      width: 36px;
+    }
+
+    .fee-table-wrap td {
+      padding: 8px 10px;
+      text-align: center;
+      border-bottom: 1px solid #e8ecf2;
+      border-right: 1px solid #e8ecf2;
+      color: #333;
+    }
+
+    .fee-table-wrap td:nth-child(3) {
+      text-align: left;
+    }
+
+    .fee-table-wrap tbody tr:hover {
+      background: #f5f9ff;
+    }
+
+    .fee-table-wrap .pagination {
+      padding: 8px 12px;
+      font-size: 12px;
+      color: #666;
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid #dde3ed;
+    }
+
+    /* RIGHT PANEL */
+    .fee-right-panel {
+      width: 320px;
+      min-width: 320px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+    }
+
+    .fee-card {
+      background: white;
+      border: 1px solid #cfd8e6;
+      border-radius: 6px;
+      overflow: hidden;
+    }
+
+    .fee-card .card-head {
+      background: #e8f0fb;
+      padding: 9px 14px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #1a3a6c;
+      border-bottom: 1px solid #cfd8e6;
+    }
+
+    .fee-card .card-body {
+      padding: 12px 14px;
+    }
+
+    .fee-card .detail-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12.5px;
+      margin-bottom: 6px;
+      color: #333;
+    }
+
+    .fee-card .detail-row .link {
+      color: #0057b7;
+      font-size: 11.5px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .fee-card .detail-row .link:hover {
+      text-decoration: underline;
+    }
+
+    .fee-card .detail-row .val {
+      font-weight: 500;
+    }
+
+    .balance-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0 4px;
+      border-top: 1px solid #dde3ed;
+      margin-top: 6px;
+    }
+
+    .balance-row .bal-label {
+      font-size: 13px;
+      font-weight: 700;
+      color: #e00;
+    }
+
+    .balance-row .bal-amount {
+      font-size: 16px;
+      font-weight: 800;
+      color: #e00;
+    }
+
+    .input-row {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 8px;
+      gap: 4px;
+    }
+
+    .input-row label {
+      font-size: 12px;
+      color: #555;
+      font-weight: 600;
+    }
+
+    .input-row input,
+    .input-row select {
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      padding: 7px 10px;
+      font-size: 13px;
+      background: white;
+    }
+
+    .input-row input[disabled] {
+      background: #f0f0f0;
+    }
+
+    .captcha-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .captcha-box {
+      background: #222;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 700;
+      letter-spacing: 4px;
+      padding: 8px 14px;
+      border-radius: 4px;
+      font-family: monospace;
+      user-select: none;
+    }
+
+    .captcha-refresh {
+      background: none;
+      border: none;
+      font-size: 20px;
+      cursor: pointer;
+      color: #0057b7;
+    }
+
+    .captcha-input {
+      flex: 1;
+      border: 1px solid #bbb;
+      border-radius: 4px;
+      padding: 7px 10px;
+      font-size: 13px;
+    }
+
+    /* SECURITY NOTICE card */
+    .security-notice {
+      background: #fff8e1;
+      border: 1px solid #ffe082;
+      border-radius: 6px;
+      padding: 16px 18px;
+      text-align: center;
+    }
+
+    .security-notice .icon {
+      font-size: 32px;
+      margin-bottom: 8px;
+    }
+
+    .security-notice p {
+      font-size: 13px;
+      color: #5a4000;
+      line-height: 1.6;
+    }
+
+    .security-notice p strong {
+      color: #3a2800;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- TOP BAR -->
+  <header class="topbar">
+    <button class="icon-btn menu" aria-label="Open menu"><span></span></button>
+    <div class="brand"><img src="assets/logo.png" alt="Portal Logo" /></div>
+    <nav class="actions">
+      <button class="icon-btn circ back" title="Back" onclick="history.back()"></button>
+      <button class="icon-btn circ stats" title="Analytics"></button>
+      <a class="icon-btn circ home" title="Home" href="dashboard.html"></a>
+      <div class="user">
+        <span class="name">AYUSH NEGI</span>
+        <img class="avatar" src="assets/profile-photo.png" alt="Profile photo" />
+        <button class="icon-btn caret" aria-label="Account menu"></button>
+        <div class="dropdown" data-open="false">
+          <a href="#">Change Password</a>
+          <a href="index.html">Logout</a>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <div class="fee-layout">
+
+    <!-- LEFT SIDEBAR -->
+    <aside class="fee-sidebar">
+      <a href="#" class="active" id="link-fee-submission" onclick="showPanel('fee-submission'); return false;">Fee
+        Submission</a>
+      <a href="#" id="link-fee-receipt" onclick="showPanel('secure'); return false;">Fee Receipt</a>
+      <a href="#" id="link-txn-history" onclick="showPanel('secure'); return false;">Transaction History</a>
+      <a href="#" id="link-challan" onclick="showPanel('secure'); return false;">Challan</a>
+      <a href="#" id="link-fee-installment" onclick="showPanel('secure'); return false;">Fee Installment</a>
+    </aside>
+
+    <!-- MAIN CONTENT -->
+    <div class="fee-content">
+
+      <!-- Default placeholder -->
+      <div class="fee-placeholder" id="panel-default">
+        Please Select Menu From Menu Bar.
+      </div>
+
+      <!-- Security notice for restricted sections -->
+      <div id="panel-secure" style="display:none; padding:40px 0; max-width:480px; margin:0 auto;">
+        <div class="security-notice">
+          <div class="icon">🔒</div>
+          <p>
+            <strong>Access Restricted for Security Purpose</strong><br /><br />
+            To access <strong>Fee Receipt</strong>, <strong>Transaction History</strong>,
+            <strong>Challan</strong> and <strong>Fee Installment</strong> records,
+            you need to come to the college and request access at the
+            <strong>Student Accounts Office (SAO)</strong>.<br /><br />
+            This restriction is in place to protect your financial data and prevent
+            unauthorized access. Please carry your valid student ID card.
+          </p>
+        </div>
+      </div>
+
+      <!-- FEE SUBMISSION PANEL -->
+      <div id="panel-fee-submission" style="display:none;">
+
+        <div class="notice-strip">
+          <p><span class="star">★</span>Kindly download receipt after twelve (12) hours from fee receipt tab</p>
+          <p><span class="star">★</span>For any discrepancy in fee due amount either please raise query in Grievance
+            section <strong>OR</strong> call at <strong>7088413131</strong></p>
+          <p style="margin-left:14px;">Call timing 9am to 5pm (Monday to Saturday except holidays)</p>
+        </div>
+
+        <div class="fee-type-row">
+          <label>Fee Type</label>
+          <select>
+            <option>Course Fee</option>
+            <option>Hostel Fee</option>
+            <option>Transport Fee</option>
+          </select>
+        </div>
+
+        <div class="fee-body">
+
+          <!-- LEFT: Fee Table -->
+          <div class="fee-table-wrap">
+            <div class="table-header">Academic Fee Detail (Amount in ₹)</div>
+            <table>
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Sem/Year</th>
+                  <th>Fee Head</th>
+                  <th>Current Dues Amount</th>
+                  <th>Scholarship / Discount</th>
+                  <th>Paid Amount</th>
+                  <th>Balance Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>3rd sm</td>
+                  <td style="text-align:left">Examination Fee</td>
+                  <td>9,000.00</td>
+                  <td>0.00</td>
+                  <td>4,500.00</td>
+                  <td>4,500.00</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>3rd sm</td>
+                  <td style="text-align:left">Library Fee</td>
+                  <td>7,000.00</td>
+                  <td>0.00</td>
+                  <td>3,500.00</td>
+                  <td>3,500.00</td>
+                </tr>
+                <tr>
+                  <td>3</td>
+                  <td>3rd sm</td>
+                  <td style="text-align:left">Student Welfare Fee</td>
+                  <td>1,500.00</td>
+                  <td>0.00</td>
+                  <td>750.00</td>
+                  <td>750.00</td>
+                </tr>
+                <tr>
+                  <td>4</td>
+                  <td>3rd sm</td>
+                  <td style="text-align:left">Sport Fee</td>
+                  <td>1,000.00</td>
+                  <td>0.00</td>
+                  <td>500.00</td>
+                  <td>500.00</td>
+                </tr>
+                <tr>
+                  <td>5</td>
+                  <td>3rd sm</td>
+                  <td style="text-align:left">Online</td>
+                  <td>1,000.00</td>
+                  <td>0.00</td>
+                  <td>500.00</td>
+                  <td>500.00</td>
+                </tr>
+                <tr>
+                  <td>6</td>
+                  <td>3rd sm</td>
+                  <td style="text-align:left">Transport Fee</td>
+                  <td>3,300.00</td>
+                  <td>0.00</td>
+                  <td>1,650.00</td>
+                  <td>1,650.00</td>
+                </tr>
+                <tr>
+                  <td>7</td>
+                  <td>3rd sm</td>
+                  <td style="text-align:left">Tuition Fee</td>
+                  <td>407,926.00</td>
+                  <td>20,396.00</td>
+                  <td>193,765.00</td>
+                  <td>203,765.00</td>
+                </tr>
+                <tr>
+                  <td>8</td>
+                  <td>4th yr</td>
+                  <td style="text-align:left">Examination Fee</td>
+                  <td>4,500.00</td>
+                  <td>0.00</td>
+                  <td>0.00</td>
+                  <td>4,500.00</td>
+                </tr>
+                <tr>
+                  <td>9</td>
+                  <td>4th yr</td>
+                  <td style="text-align:left">Library Fee</td>
+                  <td>3,500.00</td>
+                  <td>0.00</td>
+                  <td>0.00</td>
+                  <td>3,500.00</td>
+                </tr>
+                <tr>
+                  <td>10</td>
+                  <td>4th yr</td>
+                  <td style="text-align:left">Insurance Cover</td>
+                  <td>1,000.00</td>
+                  <td>0.00</td>
+                  <td>0.00</td>
+                  <td>1,000.00</td>
+                </tr>
+                <tr>
+                  <td>11</td>
+                  <td>4th yr</td>
+                  <td style="text-align:left">Student Welfare Fee</td>
+                  <td>750.00</td>
+                  <td>0.00</td>
+                  <td>0.00</td>
+                  <td>750.00</td>
+                </tr>
+                <tr>
+                  <td>12</td>
+                  <td>4th yr</td>
+                  <td style="text-align:left">Sport Fee</td>
+                  <td>500.00</td>
+                  <td>0.00</td>
+                  <td>0.00</td>
+                  <td>500.00</td>
+                </tr>
+                <tr>
+                  <td>13</td>
+                  <td>4th yr</td>
+                  <td style="text-align:left">Online</td>
+                  <td>500.00</td>
+                  <td>0.00</td>
+                  <td>0.00</td>
+                  <td>500.00</td>
+                </tr>
+                <tr>
+                  <td>14</td>
+                  <td>4th yr</td>
+                  <td style="text-align:left">Transport Fee</td>
+                  <td>1,650.00</td>
+                  <td>0.00</td>
+                  <td>0.00</td>
+                  <td>1,650.00</td>
+                </tr>
+                <tr>
+                  <td>15</td>
+                  <td>4th yr</td>
+                  <td style="text-align:left">Degree Fee</td>
+                  <td>0.00</td>
+                  <td>0.00</td>
+                  <td>0.00</td>
+                  <td>0.00</td>
+                </tr>
+                <tr>
+                  <td>16</td>
+                  <td>4th yr</td>
+                  <td style="text-align:left">Memorable Charges</td>
+                  <td>0.00</td>
+                  <td>0.00</td>
+                  <td>0.00</td>
+                  <td>0.00</td>
+                </tr>
+                <tr>
+                  <td>17</td>
+                  <td>4th yr</td>
+                  <td style="text-align:left">Alumni Fee</td>
+                  <td>0.00</td>
+                  <td>0.00</td>
+                  <td>0.00</td>
+                  <td>0.00</td>
+                </tr>
+                <tr>
+                  <td>18</td>
+                  <td>4th yr</td>
+                  <td style="text-align:left">Tuition Fee</td>
+                  <td>214,161.00</td>
+                  <td>10,708.00</td>
+                  <td>0.00</td>
+                  <td>213,453.00</td>
+                </tr>
+              </tbody>
+            </table>
+            <div class="pagination">
+              <span>Page 1 of 1</span>
+              <span>View 1–18 of 18</span>
+            </div>
+          </div>
+
+          <!-- RIGHT: Fee Summary -->
+          <div class="fee-right-panel">
+
+            <!-- Student Details Card -->
+            <div class="fee-card">
+              <div class="card-head">Student Details</div>
+              <div class="card-body">
+                <div class="detail-row"><span>Student Name :</span><span class="val">AYUSH NEGI</span></div>
+                <div class="detail-row"><span>Admission No. :</span><span class="val">230213579</span></div>
+                <div class="detail-row"><span>Program :</span><span class="val" style="font-size:11px;">BACHELOR OF
+                    TECHNOLOGY / (CSE) With AI &amp; ML</span></div>
+                <div class="detail-row"><span>Curr. Year :</span><span class="val">3</span></div>
+                <div class="detail-row"><span>Curr. Semester :</span><span class="val">6</span></div>
+              </div>
+            </div>
+
+            <!-- Fee Details Card -->
+            <div class="fee-card">
+              <div class="card-head">Fee Details</div>
+              <div class="card-body">
+                <div class="detail-row"><span>Total Due (₹) :</span><span class="val">213453.00</span></div>
+                <div class="detail-row"><span>Scholarship/Discount (₹) :</span><a class="link" href="#">View Detail</a>
+                </div>
+                <div class="detail-row" style="justify-content:flex-end;"><span class="val">31104.00</span></div>
+                <div class="detail-row"><span>Paid Amount (₹) :</span><span class="val">205165.00</span></div>
+                <div class="detail-row"><span>Excess Amount (₹) :</span><span class="val">0.00</span></div>
+                <div class="detail-row"><span>Academic Fee Fine (₹) :</span><a class="link" href="#">View Detail</a>
+                </div>
+                <div class="detail-row" style="justify-content:flex-end;"><span class="val">0.00</span></div>
+                <div class="detail-row"><span>Fee Frequency :</span><span class="val">Half Yearly Basis</span></div>
+                <div class="detail-row"><span>Fee Installment (₹) :</span><a class="link" href="#">View Detail</a></div>
+
+                <div class="balance-row">
+                  <span class="bal-label">Balance Amount () (₹) :</span>
+                  <span class="bal-amount">210,309.00</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Payment Card -->
+            <div class="fee-card">
+              <div class="card-head">Payment</div>
+              <div class="card-body">
+                <div class="input-row">
+                  <label>Amount To Pay (Academic) (₹) :</label>
+                  <input type="number" placeholder="0.00" />
+                </div>
+                <div class="input-row">
+                  <label>Total Amount To Pay (₹) :</label>
+                  <input type="number" placeholder="0.00" disabled />
+                </div>
+                <div class="input-row">
+                  <label>Payment Date :</label>
+                  <input type="text" value="22/04/2026" disabled />
+                </div>
+                <div class="input-row">
+                  <label>Payment Mode :</label>
+                  <select>
+                    <option>Online</option>
+                    <option>NEFT</option>
+                    <option>Cheque</option>
+                  </select>
+                </div>
+                <div class="input-row">
+                  <label>Gateway :</label>
+                  <select>
+                    <option>--Select--</option>
+                    <option>Paytm</option>
+                    <option>Razorpay</option>
+                  </select>
+                </div>
+                <div class="captcha-row">
+                  <div class="captcha-box" id="captchaDisplay">562990</div>
+                  <button class="captcha-refresh" title="Refresh captcha" onclick="refreshCaptcha()">🔄</button>
+                  <input class="captcha-input" type="text" placeholder="Enter Captcha" />
+                </div>
+              </div>
+            </div>
+
+            <div
+              style="background:#fff3cd;border:1px solid #ffc107;border-radius:5px;padding:10px 12px;font-size:11px;color:#6a4000;">
+              <strong>Note:-</strong><br />
+              ★ Please do not refresh or Press back button or do not close your browser, until successfully receipt is
+              not generated.<br />
+              ★ There is no additional charges on any payment.
+            </div>
+
+          </div><!-- .fee-right-panel -->
+        </div><!-- .fee-body -->
+      </div><!-- #panel-fee-submission -->
+
+    </div><!-- .fee-content -->
+  </div><!-- .fee-layout -->
+
+  <script src="js/dashboard.js"></script>
+  <script>
+    function showPanel(name) {
+      document.getElementById('panel-default').style.display = 'none';
+      document.getElementById('panel-secure').style.display = 'none';
+      document.getElementById('panel-fee-submission').style.display = 'none';
+
+      document.querySelectorAll('.fee-sidebar a').forEach(a => a.classList.remove('active'));
+
+      if (name === 'fee-submission') {
+        document.getElementById('panel-fee-submission').style.display = 'block';
+        document.getElementById('link-fee-submission').classList.add('active');
+      } else if (name === 'secure') {
+        document.getElementById('panel-secure').style.display = 'block';
+      }
+    }
+
+    // Auto-open fee submission on load
+    window.addEventListener('DOMContentLoaded', () => {
+      showPanel('fee-submission');
+    });
+
+    function refreshCaptcha() {
+      const digits = Math.floor(100000 + Math.random() * 900000).toString();
+      document.getElementById('captchaDisplay').textContent = digits;
+    }
+  </script>
+</body>
+
+</html>
